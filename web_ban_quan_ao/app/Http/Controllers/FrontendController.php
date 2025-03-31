@@ -28,8 +28,8 @@ class FrontendController extends Controller
         $category = Category::where('status', '1')->limit(3)->get();
         $banner = Banner::where('status', '1')->limit(3)->get();
         $brand = Brand::where('status', '1')->limit(5)->get();
-        $productnew = Product::where('status', '1')->where('condition', '1')->where('discount','=','0')->orderBy('id','ASC')->limit(5)->get();
-        $products = Product::where('status', '1')->where('is_featured', 1)->where('discount','=','0')->orderBy('id','DESC')->limit(5)->get();
+        $productnew = Product::where('status', '1')->where('condition', '1')->where('discount', '=', '0')->orderBy('id', 'ASC')->limit(5)->get();
+        $products = Product::where('status', '1')->where('is_featured', 1)->where('discount', '=', '0')->orderBy('id', 'DESC')->limit(5)->get();
         $posts = Post::where('status', '1')->limit(3)->get();
         return view('frontend.index')->with('banner', $banner)->with('productnew', $productnew)
             ->with('products', $products)->with('posts', $posts)->with('brand', $brand)
@@ -38,11 +38,11 @@ class FrontendController extends Controller
 
     public function productDetail($slug, Request $request)
     {
-        $url = $request->url();
+        $currentUrl = $request->url();
         $productDetail = Product::getProductBySlug($slug);
         $product_relate = Product::where('cat_id', $productDetail->id)->limit(5)->get();
         return view('frontend.pages.product-detail')->with('product_detail', $productDetail)
-            ->with('product_relate', $product_relate)->with('url', $url);
+            ->with('product_relate', $product_relate)->with('url', $currentUrl);
     }
 
     public function contact()
@@ -104,90 +104,94 @@ class FrontendController extends Controller
             ->with('staticbanner', $staticBanner);
     }
 
-    public function productsGrids(){
-        $staticBanner=Banner::where('status','1')->first();
-        $products=Product::where('status','1')->paginate(12);
-        return view('frontend.pages.product-grids')->with('banners',$staticBanner)
-        ->with('products',$products);
+    public function productsGrids()
+    {
+        $staticBanner = Banner::where('status', '1')->first();
+        $products = Product::where('status', '1')->paginate(12);
+        return view('frontend.pages.product-grids')->with('banners', $staticBanner)
+            ->with('products', $products);
     }
 
-    public function productGridsFilter(Request $request){
+    public function productGridsFilter(Request $request)
+    {
         $banners = Banner::where('status', '1')->first();
         if (!empty($_POST['sort_by'])) {
             if ($_POST['sort_by'] == 'priceAsc') {
-                $products =Product::where('status','1')->orderBy('price','ASC')->get();
+                $products = Product::where('status', '1')->orderBy('price', 'ASC')->get();
             }
             if ($_POST['sort_by'] == 'priceDesc') {
-                $products =Product::where('status','1')->orderBy('price','DESC')->get();
+                $products = Product::where('status', '1')->orderBy('price', 'DESC')->get();
             }
-            if($_POST['sort_by']=='AZ'){
-                $products =Product::where('status','1')->orderBy('title','ASC')->get();
+            if ($_POST['sort_by'] == 'AZ') {
+                $products = Product::where('status', '1')->orderBy('title', 'ASC')->get();
             }
-            if($_POST['sort_by']=='ZA'){
-                $products =Product::where('status','1')->orderBy('title','DESC')->get();
+            if ($_POST['sort_by'] == 'ZA') {
+                $products = Product::where('status', '1')->orderBy('title', 'DESC')->get();
             }
-            if($_POST['sort_by']=='best-selling'){
-                $products=DB::table('orders_detail')->select('soluong',DB::raw('count(soluong)'))
-                ->groupBy('soluong')->limit(3)->orderBy('soluong','DESC')->join('products','products.id','=','orders_detail.product_id')->select('*')
-                ->join('orders','orders.id','=','orders_detail.id_donhang')->get();
+            if ($_POST['sort_by'] == 'best-selling') {
+                $products = DB::table('orders_detail')->select('soluong', DB::raw('count(soluong)'))
+                    ->groupBy('soluong')->limit(3)->orderBy('soluong', 'DESC')->join('products', 'products.id', '=', 'orders_detail.product_id')->select('*')
+                    ->join('orders', 'orders.id', '=', 'orders_detail.id_donhang')->get();
             }
-            if($_POST['sort_by']=='quantity-descending'){
-                $products =Product::where('status','1')->orderBy('stock','DESC')->get();
+            if ($_POST['sort_by'] == 'quantity-descending') {
+                $products = Product::where('status', '1')->orderBy('stock', 'DESC')->get();
             }
             return view('frontend.pages.product-grids')->with('products', $products)
-            ->with('banners', $banners);
+                ->with('banners', $banners);
         }
     }
 
-    public function productListsFilter(){
+    public function productListsFilter()
+    {
         $banners = Banner::where('status', '1')->first();
         if (!empty($_POST['sort_by'])) {
             if ($_POST['sort_by'] == 'priceAsc') {
-                $products =Product::where('status','1')->orderBy('price','ASC')->get();
+                $products = Product::where('status', '1')->orderBy('price', 'ASC')->get();
             }
             if ($_POST['sort_by'] == 'priceDesc') {
-                $products =Product::where('status','1')->orderBy('price','DESC')->get();
+                $products = Product::where('status', '1')->orderBy('price', 'DESC')->get();
             }
-            if($_POST['sort_by']=='AZ'){
-                $products =Product::where('status','1')->orderBy('title','ASC')->get();
+            if ($_POST['sort_by'] == 'AZ') {
+                $products = Product::where('status', '1')->orderBy('title', 'ASC')->get();
             }
-            if($_POST['sort_by']=='ZA'){
-                $products =Product::where('status','1')->orderBy('title','DESC')->get();
+            if ($_POST['sort_by'] == 'ZA') {
+                $products = Product::where('status', '1')->orderBy('title', 'DESC')->get();
             }
-            if($_POST['sort_by']=='best-selling'){
-                $products=DB::table('orders_detail')->select('soluong',DB::raw('count(soluong)'))
-                ->groupBy('soluong')->limit(3)->orderBy('soluong','DESC')->join('products','products.id','=','orders_detail.product_id')->select('*')
-                ->join('orders','orders.id','=','orders_detail.id_donhang')->get();
+            if ($_POST['sort_by'] == 'best-selling') {
+                $products = DB::table('orders_detail')->select('soluong', DB::raw('count(soluong)'))
+                    ->groupBy('soluong')->limit(3)->orderBy('soluong', 'DESC')->join('products', 'products.id', '=', 'orders_detail.product_id')->select('*')
+                    ->join('orders', 'orders.id', '=', 'orders_detail.id_donhang')->get();
             }
-            if($_POST['sort_by']=='quantity-descending'){
-                $products =Product::where('status','1')->orderBy('stock','DESC')->get();
+            if ($_POST['sort_by'] == 'quantity-descending') {
+                $products = Product::where('status', '1')->orderBy('stock', 'DESC')->get();
             }
             return view('frontend.pages.product-lists')->with('products', $products)
-            ->with('staticbanner', $banners);
+                ->with('staticbanner', $banners);
         }
     }
 
-    public function productPriceSortBy(){
-        $banners=Banner::where('status','1')->first();
-        if(!empty($_POST['price_sort'])){
-            if($_POST['price_sort']=='price_1'){
+    public function productPriceSortBy()
+    {
+        $banners = Banner::where('status', '1')->first();
+        if (!empty($_POST['price_sort'])) {
+            if ($_POST['price_sort'] == 'price_1') {
                 $products = Product::where('status', '1')->where('price', '<', '300000')->get();
             }
-            if($_POST['price_sort']=='price_2'){
+            if ($_POST['price_sort'] == 'price_2') {
                 $products = Product::where('status', '1')->where('price', '>=', '300000')->where('price', '<=', '400000')->get();
             }
-            if($_POST['price_sort']=='price_3'){
+            if ($_POST['price_sort'] == 'price_3') {
                 $products = Product::where('status', '1')->where('price', '>=', '400000')->where('price', '<=', '500000')->get();
             }
-            if($_POST['price_sort']=='price_4'){
+            if ($_POST['price_sort'] == 'price_4') {
                 $products = Product::where('status', '1')->where('price', '>=', '500000')->where('price', '<=', '600000')->get();
             }
-            if($_POST['price_sort']=='price_5'){
+            if ($_POST['price_sort'] == 'price_5') {
                 $products = Product::where('status', '1')->where('price', '>', '6000000')->get();
             }
         }
-        return view('frontend.pages.product-lists')->with('staticbanner',$banners)
-        ->with('products',$products);
+        return view('frontend.pages.product-lists')->with('staticbanner', $banners)
+            ->with('products', $products);
     }
 
     public function productListSortBy(Request $request)
@@ -262,25 +266,25 @@ class FrontendController extends Controller
             if ($_POST['sort_by'] == 'priceAsc') {
                 $products = $products->orderBy('price', 'ASC');
             }
-            if($_POST['sort_by']=='AZ'){
-                $products=$products->orderBy('title','ASC');
+            if ($_POST['sort_by'] == 'AZ') {
+                $products = $products->orderBy('title', 'ASC');
             }
-            if($_POST['sort_by']=='ZA'){
-                $products=$products->orderBy('title','DESC');
+            if ($_POST['sort_by'] == 'ZA') {
+                $products = $products->orderBy('title', 'DESC');
             }
-            if($_POST['sort_by']=='best-selling'){
-                $products=DB::table('orders_detail')->select('soluong',DB::raw('count(soluong)'))
-                    ->groupBy('soluong')->limit(3)->orderBy('soluong','DESC')->join('products','products.id','=','orders_detail.product_id')->select('*')
-                    ->join('orders','orders.id','=','orders_detail.id_donhang')->get();
+            if ($_POST['sort_by'] == 'best-selling') {
+                $products = DB::table('orders_detail')->select('soluong', DB::raw('count(soluong)'))
+                    ->groupBy('soluong')->limit(3)->orderBy('soluong', 'DESC')->join('products', 'products.id', '=', 'orders_detail.product_id')->select('*')
+                    ->join('orders', 'orders.id', '=', 'orders_detail.id_donhang')->get();
             }
-            if($_GET['sort_by']=='quantity-descending'){
-                $products=$products->orderBy('stock','DESC');
+            if ($_GET['sort_by'] == 'quantity-descending') {
+                $products = $products->orderBy('stock', 'DESC');
             }
         }
 
         if (!empty($_GET['price'])) {
-            if($_GET['price']=='1'){
-                $products=$products->where('price','<','300000');
+            if ($_GET['price'] == '1') {
+                $products = $products->where('price', '<', '300000');
             }
             // $price = explode('-', $_GET['price']);
             // $products->whereBetween('price', $price);
@@ -393,9 +397,9 @@ class FrontendController extends Controller
             ->orwhere('price', 'like', '%' . $request->search . '%')
             ->orderBy('id', 'DESC')
             ->paginate('9');
-            $countProduct=$products->count();
+        $countProduct = $products->count();
         return view('frontend.pages.product-search')->with('products', $products)
-        ->with('countProduct',$countProduct);
+            ->with('countProduct', $countProduct);
     }
 
     public function blog()
